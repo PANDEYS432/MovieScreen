@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>{{ show.movie.title }}</h1>
+  
+  <p>{{ show.time|date:'F j, Y' }} at {{ show.time|time:'g:i A' }}</p>
+  <a> {{ seat_matrix }}</a>
+  <form method="post">
+    {% csrf_token %}
+    <div class="seath-map">
+      {% for row in seat_matrix %}
+        <div class="seat-row">
+          {% for seat in row %}
+            {% if seat %}
+              <label>
+                <input type="checkbox" name="seats" value="{{ seat.seat_no }}" {% if not seat.is_available %}disabled{% endif %}>
+                <span class="seat{% if not seat.is_available %} booked{% endif %}">{{ seat.seat_no }}</span>
+              </label>
+            {% else %}
+              <span class="empty-seat"></span>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+    <button type="submit">Book Tickets</button>
+  </form>
+{% endblock %}

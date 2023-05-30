@@ -31,6 +31,9 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'widget_tweaks',
+    'crispy_bootstrap4',
+    'crispy_forms',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -121,7 +124,7 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
-SITE_ID = 2
+SITE_ID = 1
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
@@ -155,3 +158,5 @@ MEDIA_URL = '/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'user.CustomUser'
+LOGIN_URL = 'user/login/'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Shows</h1>
+    <ul>
+        {% for show in shows %}
+            <li>
+                <a href="{% url 'user:book_show' show_id=show.id %}">{{ show.movie.title }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

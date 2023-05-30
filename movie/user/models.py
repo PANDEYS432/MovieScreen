@@ -3,8 +3,9 @@ from django.core.validators import MaxValueValidator
 from unittest.util import _MAX_LENGTH
 from django.contrib.auth.models import AbstractUser
 from PIL import Image 
-from django.contrib.auth.base_user import BaseUserManager
 
+from django.contrib.auth.base_user import BaseUserManager
+from datetime import date
 class CustomUserManager(BaseUserManager):
 
     def _create_user(self, email, password, **extra_fields):
@@ -39,8 +40,8 @@ class CustomUserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 class CustomUser(AbstractUser):
     
-    email = models.EmailField(verbose_name="Email", null=True, unique=True, max_length=100)
-    
+    email = models.EmailField(verbose_name="Email", null=False, default='', unique=True, max_length=100)
+    username = models.CharField(max_length=20)
     USERNAME_FIELD = "email" # make the user log in with the email
     REQUIRED_FIELDS = ["username"]
 
@@ -64,28 +65,107 @@ class UserProfile(models.Model):
             img.save(self.image.path)
     
 
+# class Movie(models.Model):
+#     title = models.CharField(max_length=255)
+#     release_date = models.DateField(blank=True, null=True)
+    
+#     def __str__(self):
+#         return self.title
+
+# class Seat(models.Model):
+#     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+#     seat_number = models.IntegerField()
+#     def __str__(self):
+#         return self.seat_number
+
+# class Booking(models.Model):
+#     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+#     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+#     seats = models.ManyToManyField(Seat)
+#     def __str__(self):
+#         return f"{self.user.username} booked {self.movie.title} for {self.seats}"
+
+# class show(models.Model):
+#     movie=models.ForeignKey(Movie,on_delete=models.CASCADE)
+#     uuid = models.UUIDField(primary_key=True)
+#     seat_matrix=models.ForeignKey(Seat, on_delete=models.CASCADE)
+#     start_time = models.DateTimeField()
+#     end_time = models.DateTimeField()
+
+# class Movie(models.Model):
+#     title = models.CharField(max_length=255)
+#     description = models.TextField()
+#     poster = models.ImageField(upload_to='movie_posters/')
+#     available = models.BooleanField(default=True)
+
+#     def str(self):
+#         return self.title
+
+
+# class Show(models.Model):
+#     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+#     time = models.DateTimeField()
+#     uuid = models.CharField(max_length=32, unique=True)
+#     seats = models.JSONField(default=dict)
+
+#     def str(self):
+#         return f"{self.movie.title} ({self.time.strftime('%Y-%m-%d %H:%M')})"
+
+
+# class Booking(models.Model):
+#     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+#     show = models.ForeignKey(Show, on_delete=models.CASCADE)
+#     seats = models.JSONField(default=list)
+#     def str(self):
+#         return f"{self.user.username} - {self.show}"
+
+#     def save(self, *args, **kwargs):
+#     # Check if user has already booked 2 tickets this month
+#         bookings_this_month = Booking.objects.filter(user=self.user,show__time__month=self.show.time.month)
+#         if len(bookings_this_month) >= 2:
+#             raise ValueError("You can only book 2 tickets per month.")
+
+#         # Update the show's seat matrix with the selected seats
+#         show_seats = self.show.seats
+#         for seat in self.selected_seats:
+#             row, col = seat.split('_')
+#             show_seats[row][col] = self.user.username
+
+#         self.show.seats = show_seats
+#         self.show.save()
+#         super().save(*args, **kwargs)
+
+# from django.db import models
+# from django.contrib.auth.models import User
+
+
 class Movie(models.Model):
     title = models.CharField(max_length=255)
-    release_date = models.DateField(blank=True, null=True)
-    def __str__(self):
+    description = models.TextField()
+    poster = models.ImageField(upload_to='movie_posters/')
+    available = models.BooleanField(default=True)
+
+    def str(self):
         return self.title
 
-class Seat(models.Model):
+
+class Show(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    seat_number = models.IntegerField()
-    def __str__(self):
-        return self.seat_number
-
-class Booking(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    seats = models.ManyToManyField(Seat)
-    def __str__(self):
-        return f"{self.user.username} booked {self.movie.title} for {self.seats}"
-
-    #average_star=models.DecimalField(max_digits=3,decimal_places=2,default=5.00)
-    #UPI = models.CharField(max_length=100, default=None)
-
+    time = models.DateTimeField()
+    uuid = models.CharField(max_length=32, unique=True)
     
 
+    def str(self):
+     return f"{self.movie.title} ({self.time.strftime('%Y-%m-%d %H:%M')})"
+
+    
+class Seat(models.Model):
+    seat_no=models.IntegerField()
+    show=models.ForeignKey(Show, on_delete=models.CASCADE)
+    is_available=models.BooleanField(default=True)
+
+class Booking(models.Model):
+    user=models.ForeignKey(CustomUser,on_delete=models.CASCADE)
+    seat=models.ManyToManyField(Seat)
+    show=models.ForeignKey(Show,on_delete=models.CASCADE)
 
