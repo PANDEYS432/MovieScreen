@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
 
-from .models import CustomUser,UserProfile
+from .models import CustomUser,UserProfile,Show,Movie
 
 class SignUpForm(UserCreationForm):
     class Meta:
@@ -34,3 +34,4 @@ class UpdateProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ['image', 'phone_no']
+

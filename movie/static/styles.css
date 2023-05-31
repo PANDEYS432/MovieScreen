@@ -80,4 +80,57 @@ p {
     border-radius: 3px;
     background-color: #f4ad12;
   }
+  .profile-page {
+    margin: 0 auto;
+    width: 500px;
+    min-height: 100vh;
+    background-color: #fff;
+    padding: 20px;
+  }
   
+  .profile-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    float: left;
+    margin-right: 20px;
+  }
+  
+  .profile-info {
+    margin-top: 20px;
+  }
+  
+  .profile-name {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  .profile-email {
+    font-size: 16px;
+  }
+  
+  .profile-bio {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  .booked-shows {
+    margin-top: 20px;
+  }
+  
+  .booked-show {
+    margin-bottom: 10px;
+  }
+  
+  .booked-show-title {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .booked-show-date {
+    font-size: 16px;
+  }
+  
+  .booked-show-time {
+    font-size: 14px;
+  }

@@ -10,9 +10,13 @@
 </head>
 <body>
     <nav>
-        <a href="/user/shows">Home</a>
-        <a href="/user/profile">Profile</a>
-        <a href="user/booked-movies">Booked Movies</a>
+        {% if user.is_authenticated %}
+            <button class="btnm"><a href="{% url 'user:profile' %}">Profile</a></button>
+            <button class="btnm"><a href="{% url 'user:logout' %}">Logout</a></button>
+        {% else %}
+            <a class="nav-item nav-link" href="{% url 'user:login' %}">Login</a>
+            <a class="nav-item nav-link" href="{% url 'user:signup' %}">Register</a>
+        {% endif %}
     </nav>
 
     {% block content %}

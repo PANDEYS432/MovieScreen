@@ -1,17 +1,13 @@
-{%load static%}
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Page</title>
-    
-</head>
-
-<body>
-    
+{% block content %}
+<div class="profile-image">
+    {% if get_customuserdetails.profile_image %}
+      <img src="{{ get_userprofiledetails.image.url }}" alt="Profile image">
+    {% else %}
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Profile_avatar_default.svg/1200px-Profile_avatar_default.svg.png" alt="Profile image">
+    {% endif %}
+  </div>
     <div class="body-student student-profile py-4">
         <div class="container">
             <div class="row">
@@ -24,15 +20,13 @@
                         </div>
                         <div class="card-body">
                             <p class="mb-0"><strong class="pr-1">Username:</strong>{{ user.username }}</p>
-                            <!-- <p class="mb-0"><strong class="pr-1">Class:</strong>4</p>
-                  <p class="mb-0"><strong class="pr-1">Section:</strong>A</p> -->
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-8">
                     <div class="card shadow-sm">
                         <div class="card-header bg-transparent border-0">
-                            <h3 class="mb-0"><i class="far fa-clone pr-1"></i>User Information: <a href="{%url 'editprofile'%}"> <i class="pencil fa-solid fa-pencil"></i> </a> </h3>
+                            
                         </div>
                         <div class="card-body pt-0">
                             <table class="table table-bordered">
@@ -42,20 +36,11 @@
                                     <td>{{ user.email }}</td>
                                 </tr>
                                 <tr>
-                                    <th width="30%">Phone Number:</th>
+                                    <th width="30%">Phone number:</th>
                                     <td width="2%">:</td>
-                                    <td>{{ get_userprofiledetails.phone_no}}</td>
+                                    <td>{{ get_userprofiledetails.phone_no }}</td>
                                 </tr>
-                                <tr>
-                                    <th width="30%">User Star:</th>
-                                    <td width="2%">:</td>
-                                    <td>{{ get_userprofiledetails.star }}</td>
-                                </tr>
-                                <tr>
-                                    <th width="30%">Address</th>
-                                    <td width="2%">:</td>
-                                    <td>{{ get_userprofiledetails.address}}</td>
-                                </tr>
+                                
                             </table>
                         </div>
                     </div>
@@ -65,10 +50,20 @@
 
                     
                 </div>
+
             </div>
         </div>
     </div>
-
-</body>
-
-</html>
+    <div class="booked-shows">
+        <h3>Booked Shows</h3>
+        {% for booked_show in booked_shows %}
+          <ul>
+            <li>
+                <a href="{% url 'user:book_show' show_id=booked_show.show.id %}">{{ booked_show.show.movie.title }}</a>
+              <h4 class="booked-show-title">{{ booked_show.show.movie.title }}</h4>
+              <h6 class="booked-show-time">{{ booked_show.show.time }}</h6>
+            </li>
+          </ul>
+        {% endfor %}
+      </div>
+{% endblock %}

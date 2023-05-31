@@ -4,7 +4,6 @@
   <h1>{{ show.movie.title }}</h1>
   
   <p>{{ show.time|date:'F j, Y' }} at {{ show.time|time:'g:i A' }}</p>
-  <a> {{ seat_matrix }}</a>
   <form method="post">
     {% csrf_token %}
     <div class="seath-map">
