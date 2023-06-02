@@ -2,7 +2,7 @@ from django.views.generic import ListView
 from django.shortcuts import render, redirect
 from django.contrib.auth import login as django_login, authenticate, logout as django_logout
 from django.urls import reverse
-from .models import UserProfile, CustomUser,Show,Seat,Booking,Movie
+from .models import UserProfile, CustomUser,Show,Seat,Booking,Movies
 from .forms import SignUpForm, LogInForm, UpdateUserForm, UpdateProfileForm
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
@@ -11,6 +11,9 @@ from django.urls import reverse
 from django.views.generic import DetailView
 from django.core.exceptions import ValidationError
 from .decoraters import admin_only
+from tmdbv3api import Movie
+from tmdbv3api import TMDb
+
 import uuid
 def signup(request):
     if request.method == 'POST':
@@ -87,8 +90,6 @@ def book_show(request, show_id):
     booked_seats = seats.filter( is_available=False).values_list('seat_no', flat=True)
     all_seats=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]
     available_seats = [seat for seat in all_seats if seat not in booked_seats]
-    for i in available_seats:
-        print(i)
     max_row=5
     max_col=6
     # Create a seat matrix
@@ -136,17 +137,25 @@ def shows(request):
 
 @admin_only
 def add_show(request):
+    tmdb = TMDb()
+    tmdb.api_key = '3eee8fa0635034fad69d09fc80da7e97'
+    movie1 = Movie()
     if request.method == 'POST':
         movie_title = request.POST['movie_title']
-        movie = Movie.objects.filter(title=movie_title).first()
-        print(movie)
-        if movie=='other':
+        movie = Movies.objects.filter(title=movie_title).first()
+        search_results={}
+        if movie_title=='Other':
             other_title = request.POST['other_title']
-            movie = Movie.objects.create(title=other_title)
+            search = movie1.search(other_title)
+            search_results=search
+            print(search[0].original_title)
+            #movie = Movies.objects.create(title=search.title,poster=search.poster_path,description=search.overview)
         show_time = request.POST['show_time']
         uuid1=uuid.uuid1()
-        show = Show.objects.create(movie=movie, time=show_time,uuid=uuid1)
-        return redirect('user:add_show')
+        movies = Movies.objects.all()
+        #show = Show.objects.create(movie=movie, time=show_time,uuid=uuid1)
+        return render(request, 'user/add_show.html', {'movies': movies,'search_results': search_results})
     else:
-        movies = Movie.objects.all()
-        return render(request, 'user/add_show.html', {'movies': movies})
+        movies = Movies.objects.all()
+        search_results={}
+        return render(request, 'user/add_show.html', {'movies': movies,'search_results': search_results})

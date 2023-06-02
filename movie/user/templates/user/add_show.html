@@ -29,6 +29,13 @@
                     <label for="other_movie_title">Other Movie Title</label>
                     <input type="text" class="form-control" id="other_title" name="other_title">
                 </div>
+                
+                {% if search_results|length > 0 %}
+                    <h3> We didnt find that title. Perhaps you meant: </h3>
+                    {% for movies in search_results %}
+                        <p> {{ movies.title }}</p>
+                    {% endfor %}    
+                {% endif %}
                 <button type="submit" class="btn btn-primary">Add Show</button>
             </form>
         </div>

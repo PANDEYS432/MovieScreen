@@ -38,6 +38,7 @@ class CustomUserManager(BaseUserManager):
             raise ValueError(
                 "Superuser must have is_superuser=True."
             )
+    
 
         return self._create_user(email, password, **extra_fields)
 class CustomUser(AbstractUser):
@@ -68,7 +69,7 @@ class UserProfile(models.Model):
             img.save(self.image.path)
     
 
-class Movie(models.Model):
+class Movies(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     poster = models.ImageField(upload_to='movie_posters/')
@@ -79,7 +80,7 @@ class Movie(models.Model):
 
 
 class Show(models.Model):
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movies, on_delete=models.CASCADE)
     time = models.DateTimeField()
     uuid = models.CharField(max_length=32, unique=True)
     

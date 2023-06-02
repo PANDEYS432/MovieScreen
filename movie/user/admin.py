@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import CustomUser,Movie,Booking,Show,Seat,UserProfile
+from .models import CustomUser,Movies,Booking,Show,Seat,UserProfile
 
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
@@ -12,7 +12,7 @@ class CustomUserAdmin(UserAdmin):
 
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(UserProfile)
-admin.site.register(Movie)
+admin.site.register(Movies)
 admin.site.register(Seat)
 admin.site.register(Show)
 #admin.site.register(SeatMatrix)
