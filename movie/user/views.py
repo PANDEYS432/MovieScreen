@@ -13,16 +13,27 @@ from django.core.exceptions import ValidationError
 from .decoraters import admin_only
 from tmdbv3api import Movie
 from tmdbv3api import TMDb
-
+from django.core.mail import send_mail
 import uuid
+
 def signup(request):
     if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            user.backend = 'django.contrib.auth.backends.ModelBackend'
-            django_login(request, user)
-            return redirect('shows')
+        try:
+            form = SignUpForm(request.POST)
+            if form.is_valid():
+                email = form.cleaned_data['email']
+                if not email.endswith('@gmail.com'):
+                    raise ValidationError("Email must end with '@school.com'")
+
+                user = form.save()
+                profile = UserProfile.objects.create(user=user)
+                user.backend = 'django.contrib.auth.backends.ModelBackend'
+                django_login(request, user)
+                return redirect('user:shows')
+        except ValidationError as e:
+            error_message = str(e)  # Retrieve the error message
+            return render(request, 'user/error.html', {'error': error_message})
+        
     else:
         form = SignUpForm()   
 
@@ -108,23 +119,46 @@ def book_show(request, show_id):
 
     if request.method == 'POST':
         selected_seats = request.POST.getlist('seats')
-        
+        bookings_this_month = Seat.objects.filter(user=request.user, show__time__month=show.time.month)
         if len(selected_seats) > len(available_seats):
             return render(request, 'user/error.html', {'error': 'You cannot book more seats than available.'})
-        try:
-            booking = Booking.objects.create(user=request.user, show=show)
-            for seat_no in selected_seats:
-                seat = Seat(show=show, seat_no=seat_no,is_available=False)
-                seat.save()
-                booking.seat.add(seat)
-            booking.save()
-            return redirect('user:shows')
-        except ValidationError as e:
-            error_message = str(e)  # Retrieve the error message
-        return render(request, 'user/error.html', {'error': error_message})
         
-    
-    return render(request, 'user/book_show.html', {'show': show, 'seat_matrix': list(seat_matrix)})
+        elif(len(selected_seats)>2):
+            return render(request, 'user/error.html', {'error': 'You cannot book more than 2 seats per month.'})
+        elif len(bookings_this_month) >= 2:
+            return render(request, 'user/error.html', {'error': 'You cannot book more than 2 per month'})
+        
+        else:
+            try:
+
+                booking = Booking.objects.create(user=request.user, show=show)
+                for seat_no in selected_seats:
+                    seat = Seat(show=show, seat_no=seat_no,is_available=False,user=request.user)
+                    seat.save()
+                    booking.seat.add(seat)
+                booking.save()
+                subject = 'Booking Confirmation'
+                message = f'Your ticket/s has been successfully booked for {show.time}.\nYou have booked {len(selected_seats)} seat/s:\n'
+                for seat in selected_seats:
+                    message += f'Seat: {seat}\n'
+                from_email='hellouserhi1@gmail.com'
+                to_email=[request.user.email]
+                send_mail(
+                    subject,
+                    message,
+                    from_email,
+                    to_email
+                )
+                return redirect('user:shows')
+            except ValidationError as e:
+                error_message = str(e)  # Retrieve the error message
+            return render(request, 'user/error.html', {'error': error_message})
+        
+    base_url = "https://image.tmdb.org/t/p/original/"
+    poster_path = show.movie.poster
+
+    complete_url = base_url+str(poster_path)[1:]
+    return render(request, 'user/book_show.html', {'show': show, 'seat_matrix': list(seat_matrix),'complete_url':complete_url})
 
 
 def shows(request):
@@ -140,22 +174,34 @@ def add_show(request):
     tmdb = TMDb()
     tmdb.api_key = '3eee8fa0635034fad69d09fc80da7e97'
     movie1 = Movie()
+    movies = Movies.objects.all()
+    search_results={}
     if request.method == 'POST':
         movie_title = request.POST['movie_title']
         movie = Movies.objects.filter(title=movie_title).first()
         search_results={}
+        show_time = request.POST['show_time']
+        uuid1=uuid.uuid1()
         if movie_title=='Other':
             other_title = request.POST['other_title']
             search = movie1.search(other_title)
             search_results=search
-            print(search[0].original_title)
+            print(search_results)
+            if (search[0].title.lower()==other_title.lower()):
+                
+                print(Movies.objects.filter(title=other_title))
+                if Movies.objects.filter(title=other_title).exists():
+                     pass
+                else:
+                     movie=Movies.objects.create(title=search[0].title,poster=search[0].poster_path,description=search[0].overview)
+                show = Show.objects.create(movie=movie, time=show_time,uuid=uuid1)    
+                search_results={}
             #movie = Movies.objects.create(title=search.title,poster=search.poster_path,description=search.overview)
-        show_time = request.POST['show_time']
-        uuid1=uuid.uuid1()
-        movies = Movies.objects.all()
-        #show = Show.objects.create(movie=movie, time=show_time,uuid=uuid1)
-        return render(request, 'user/add_show.html', {'movies': movies,'search_results': search_results})
-    else:
-        movies = Movies.objects.all()
-        search_results={}
-        return render(request, 'user/add_show.html', {'movies': movies,'search_results': search_results})
+        else :
+
+            
+        
+            show = Show.objects.create(movie=movie, time=show_time,uuid=uuid1)  
+            movies = Movies.objects.all()
+            
+    return render(request, 'user/add_show.html', {'movies': movies,'search_results': search_results})

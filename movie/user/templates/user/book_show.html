@@ -7,7 +7,7 @@
       <h2>{{ show.movie.description }}</h1>
       <p>{{ show.time|date:'F j, Y' }} at {{ show.time|time:'g:i A' }}</p>
       
-      <img class="profile_img" src="{{ show.movie.poster.url }}" height="300">
+      <img class="profile_img" style="display: flex; justify-content: center;"src="{{ complete_url }}" height="300">
                     
       <form method="post">
         {% csrf_token %}

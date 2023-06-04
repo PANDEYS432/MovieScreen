@@ -11,11 +11,9 @@ from datetime import date
 class CustomUserManager(BaseUserManager):
 
     def _create_user(self, email, password, **extra_fields):
-        """
-        Create and save a User with the given email and password.
-        """
         if not email:
             raise ValueError("The given email must be set")
+        
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
@@ -31,14 +29,9 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault("is_superuser", True)
 
         if extra_fields.get("is_staff") is not True:
-            raise ValueError(
-                "Superuser must have is_staff=True."
-            )
+            raise ValueError("Superuser must have is_staff=True.")
         if extra_fields.get("is_superuser") is not True:
-            raise ValueError(
-                "Superuser must have is_superuser=True."
-            )
-    
+            raise ValueError("Superuser must have is_superuser=True.")
 
         return self._create_user(email, password, **extra_fields)
 class CustomUser(AbstractUser):
@@ -93,8 +86,10 @@ class Seat(models.Model):
     seat_no=models.IntegerField()
     show=models.ForeignKey(Show, on_delete=models.CASCADE)
     is_available=models.BooleanField(default=True)
+    user=models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     def str(self):
         return self.seat_no
+    
 
 class Booking(models.Model):
     user=models.ForeignKey(CustomUser,on_delete=models.CASCADE)
@@ -102,8 +97,4 @@ class Booking(models.Model):
     show=models.ForeignKey(Show,on_delete=models.CASCADE)
     def str(self):
         return self.user.username, "has booked" ,self.seat_no
-    def save(self, *args, **kwargs):
-        bookings_this_month = Booking.objects.filter(user=self.user, show__time__month=self.show.time.month)
-        if len(bookings_this_month) >= 2:
-            raise ValidationError("You can only book 2 tickets per month.")
-        super().save(*args, **kwargs)
+    

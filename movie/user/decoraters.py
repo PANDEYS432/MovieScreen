@@ -5,5 +5,5 @@ def admin_only(view_func):
         if request.user.is_staff or request.user.is_superuser:            
             return view_func(request, *args, *kwargs)
         else:
-            return redirect('history')
+            return redirect('user:shows')
     return wrapper_func

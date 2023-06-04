@@ -10,6 +10,10 @@
 </head>
 <body>
     <nav>
+        <button class="btnm"><a href="{% url 'user:shows' %}">Upcoming Shows</a></button>
+        {% if iser.is_staff or user.is_superuser %}
+            <button class="btnm"><a href="{% url 'user:add_show' %}">Add Show</a></button>
+        {% endif %}
         {% if user.is_authenticated %}
             <button class="btnm"><a href="{% url 'user:profile' %}">Profile</a></button>
             <button class="btnm"><a href="{% url 'user:logout' %}">Logout</a></button>
