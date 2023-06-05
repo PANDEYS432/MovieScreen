@@ -172,7 +172,7 @@ def shows(request):
 @admin_only
 def add_show(request):
     tmdb = TMDb()
-    tmdb.api_key = '3eee8fa0635034fad69d09fc80da7e97'
+    tmdb.api_key = ''
     movie1 = Movie()
     movies = Movies.objects.all()
     search_results={}
