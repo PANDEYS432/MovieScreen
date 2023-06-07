@@ -7,5 +7,6 @@ Movie ticket booking website for Universities or Schools to screen movies.
  <br> If movie entered is not present will suggest related names.
  <br> Students can book upto 2 tickets a month and view bookings on the profile.
  <br> Students also receives movie ticket booking confirmation email after booking.
+ <br> Admin credentials 123@gmail.com password: 123
 
 https://eleena.pythonanywhere.com/user/shows/
