@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Shows</h1>
+
+    <h1>Book Your Show</h1>
     <ul>
         {% for show in shows %}
             <li>
@@ -9,4 +10,21 @@
             </li>
         {% endfor %}
     </ul>
+    <div class="main">
+        <img src="../../../media/logomain.jpeg" alt="wallpaper">
+    </div>
+    <div class="containershow">
+        <h2>Recommended Movies</h2>
+        <div class="card">
+            <img src="../../../media/barbie.jpg" alt="">
+            <img src="../../../media/croods.jpg" alt="">
+            <img src="../../../media/incredibles.jpg" alt="">
+            <img src="../../../media/junglebook.jpg" alt="">
+           
+        </div>
+        <div class="footer">
+            <img src="../../../media/logoshow.png" alt="logo">
+            
+        </div>
+    </div>
 {% endblock %}

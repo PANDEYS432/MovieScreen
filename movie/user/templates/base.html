@@ -9,7 +9,16 @@
     <title>Upcoming Shows</title>
 </head>
 <body>
-    <nav>
+    
+    <nav >
+        <div class="left">
+            <img src="../../media/logoshow.png" alt="showbookers">
+        </div>
+        <input type="text" placeholder="Search For Movies">
+        <div class="center"> 
+            
+             <h1> Show Bookers</h1></div>
+        <div class="right">
         <button class="btnm"><a href="{% url 'user:shows' %}">Upcoming Shows</a></button>
         {% if iser.is_staff or user.is_superuser %}
             <button class="btnm"><a href="{% url 'user:add_show' %}">Add Show</a></button>
@@ -21,8 +30,9 @@
             <a class="nav-item nav-link" href="{% url 'user:login' %}">Login</a>
             <a class="nav-item nav-link" href="{% url 'user:signup' %}">Register</a>
         {% endif %}
+    </div>
     </nav>
-
+    
     {% block content %}
     {% endblock %}
 </body>
